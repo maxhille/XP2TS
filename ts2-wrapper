@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# comment out or remove tis line if you feel everything works fine ...
+echo "${@}" >> ~/ts2-wrapper.log
+
+# we seem to get these all of the time but they just mess up TS2
+if [[ "${@}" == "CONNECT teamspeak://" ]]; then
+	echo "=> dropped empty URL" >> ~/ts2-wrapper.log
+	exit $?
+fi
+
+wine "C:\Program Files (x86)\Teamspeak2_RC2\client_sdk\tsControl.exe" "${@}"
+
+exit $?

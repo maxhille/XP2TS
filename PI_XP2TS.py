@@ -55,7 +55,7 @@ class PythonInterface:
     def __init__(self):
         self.__max_whazzup_age = 300
         self.__whazzup_url = "http://api.ivao.aero/getdata/whazzup/whazzup.txt"
-        self.__resource_path = "/home/dornathal/.steam/steam/SteamApps/common/X-Plane 10/Resources/plugins/X-IvAp Resources/"
+        self.__resource_path = "/home/mh/opt/xplane/Resources/plugins/X-IvAp Resources/"
 
         self._loop_callbacks = 0
         self._connected_channel = ""
@@ -126,11 +126,10 @@ class PythonInterface:
         """ takes TS useful variables and fixes paths to call TS instance """
         config = self.parse_config()
 
-        acc_vid = config.get('ACCOUNT', 'VID').strip()
-        acc_pwd = config.get('ACCOUNT', 'PASSWORD').strip()
-        ts_path = config.get('TEAMSPEAK', 'PATH').strip()
+        acc_vid = config.get('network', 'user_id').strip()
+        acc_pwd = config.get('network', 'password').strip()
 
-        self._ts_control_cmd = ts_path + "client_sdk/tsControl"
+        self._ts_control_cmd = "/home/mh/opt/xplane-ext/ts2-wrapper"
         if not os.path.isfile(self._ts_control_cmd):
             print(self._ts_control_cmd + "does not exists! Add the absolute path to the X-IvAp.conf file.")
         self._ts_prefix_complete = self._ts_control_cmd + " CONNECT TeamSpeak://"
@@ -142,7 +141,7 @@ class PythonInterface:
 
     def parse_config(self):
         config = ConfigParser()
-        config.read(self.__resource_path + "X-IvAp.conf")
+        config.read("/home/mh/.config/PilotClient/IVAO Pilot Client.conf")
         config.sections()
         return config
 
@@ -159,11 +158,9 @@ class PythonInterface:
         print("Connecting to %s/%s ...\n" % (ts_server, freq_chan))
 
         config = self.parse_config()
-        config.set("TEAMSPEAK", "SERVER", ts_server)
-        config.write(open(self.__resource_path + "X-IvAp.conf", 'w'))
 
         ts_conn_cmd = self._ts_control_cmd + " CONNECT TeamSpeak://" + ts_server
-        ts_conn_cmd += self._ts_login % (config.get("ACCOUNT", "CALLSIGN"), freq_chan)
+        ts_conn_cmd += self._ts_login % (config.get("network", "callsign"), freq_chan)
         console_cmd(ts_conn_cmd, self.__resource_path + "ts.log", "a")
         pass
 
